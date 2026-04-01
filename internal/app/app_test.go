@@ -9,7 +9,7 @@ import (
 )
 
 func TestNewStorage_Memory(t *testing.T) {
-	st, cleanup, err := newStorage(config.Config{Storage: config.StorageMemory})
+	st, cleanup, err := newStorage(context.Background(), config.Config{Storage: config.StorageMemory})
 	if err != nil {
 		t.Fatalf("newStorage returned error: %v", err)
 	}
@@ -21,7 +21,7 @@ func TestNewStorage_Memory(t *testing.T) {
 }
 
 func TestNewStorage_UnsupportedStorage(t *testing.T) {
-	_, _, err := newStorage(config.Config{Storage: "redis"})
+	_, _, err := newStorage(context.Background(), config.Config{Storage: "redis"})
 	if err == nil {
 		t.Fatal("newStorage returned nil error, want unsupported storage error")
 	}
@@ -31,13 +31,20 @@ func TestNewStorage_UnsupportedStorage(t *testing.T) {
 	}
 }
 
-func TestRun_PostgresNotImplemented(t *testing.T) {
-	err := Run(context.Background(), config.Config{Storage: config.StoragePostgres})
+func TestNewStorage_PostgresInvalidDSN(t *testing.T) {
+	_, cleanup, err := newStorage(context.Background(), config.Config{
+		Storage:     config.StoragePostgres,
+		PostgresDSN: "postgres://%",
+	})
 	if err == nil {
-		t.Fatal("Run returned nil error, want postgres not implemented error")
+		t.Fatal("newStorage returned nil error, want invalid dsn error")
 	}
 
-	if !strings.Contains(err.Error(), "not implemented") {
-		t.Fatalf("Run error = %q, want postgres not implemented error", err)
+	if cleanup != nil {
+		t.Fatal("newStorage returned cleanup on error")
+	}
+
+	if !strings.Contains(err.Error(), "create postgres pool") {
+		t.Fatalf("newStorage error = %q, want create postgres pool error", err)
 	}
 }
