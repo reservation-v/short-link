@@ -11,6 +11,8 @@ import (
 	"github.com/reservation-v/short-link/internal/service"
 )
 
+const maxCreateLinkRequestBody = 4 << 10
+
 type LinkService interface {
 	Create(ctx context.Context, originalURL string) (service.CreateResult, error)
 	Resolve(ctx context.Context, code string) (string, error)
@@ -26,7 +28,10 @@ func NewHandler(service LinkService) *Handler {
 
 func (h *Handler) createLink(w stdhttp.ResponseWriter, r *stdhttp.Request) {
 	var req createLinkRequest
-	if err := decodeJSONBody(r.Body, &req); err != nil {
+	body := stdhttp.MaxBytesReader(w, r.Body, maxCreateLinkRequestBody)
+	defer body.Close()
+
+	if err := decodeJSONBody(body, &req); err != nil {
 		writeError(w, stdhttp.StatusBadRequest, "invalid request")
 		return
 	}
