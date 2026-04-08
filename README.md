@@ -41,31 +41,7 @@ make run-memory
 
 Сервис будет доступен на `http://localhost:8081`.
 
-### 2. Локальный запуск приложения с PostgreSQL
-
-Сначала нужно поднять PostgreSQL и применить миграции:
-
-```bash
-make postgres-init
-```
-
-После этого запустить сервиса локально:
-
-```bash
-make run-postgres
-```
-
-По умолчанию используются:
-- PostgreSQL: `localhost:5433`
-- сервис: `http://localhost:8081`
-
-Если нужен свой адрес или свой DSN, можно передать их при запуске:
-
-```bash
-make run-postgres HTTP_ADDR=:8081 POSTGRES_DSN='postgres://postgres:postgres@localhost:5433/shortener?sslmode=disable'
-```
-
-### 3. Полный запуск через Docker
+### 2. Полный запуск через Docker
 
 ```bash
 make docker-up
@@ -74,6 +50,34 @@ make docker-up
 После запуска будут доступны:
 - сервис: `http://localhost:8081`
 - PostgreSQL: `localhost:5433`
+
+### 3. Ручной запуск
+
+#### **In-memory** хранилище
+```bash
+go run ./cmd/short-link --storage=memory --http-addr=:<your_addr>
+```
+- сервис: `http://localhost:<your_addr>`
+
+#### **Postgres**
+```bash
+# postgres: поднимаем только БД и миграции, приложение запускаем локально
+docker compose up -d postgres
+docker compose run --rm migrate
+go run ./cmd/short-link \
+  --storage=postgres \
+  --postgres-dsn='postgres://postgres:postgres@localhost:5433/shortener?sslmode=disable' \
+  --http-addr=:<your_addr>
+```
+- сервис: `http://localhost:<your_addr>`
+
+Остановка контейнера
+```bash
+# обычная остановка
+make docker-down
+# или с полной очисткой volume
+make reset
+```
 
 ### 4. Тесты
 
@@ -85,7 +89,7 @@ make test
 
 ## Как пользоваться
 
-При любом виде запуска обращаемся к `http://localhost:8081`, если его не заоверрайдить через --http-addr при мануальном запуске через go run или HTTP_ADDR в запуске через `make run-memory` или `make run-postgres`.
+При любом виде запуска обращаемся к `http://localhost:8081`, если его не заоверрайдить через `--http-addr` при мануальном запуске через go run.
 
 Создать короткую ссылку:
 
