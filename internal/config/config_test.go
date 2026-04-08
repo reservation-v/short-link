@@ -17,8 +17,8 @@ func TestParse_Defaults(t *testing.T) {
 	if cfg.HTTPAddr != DefaultHTTPAddr {
 		t.Fatalf("HTTPAddr = %q, want %q", cfg.HTTPAddr, DefaultHTTPAddr)
 	}
-	if cfg.BaseURL != "http://localhost:8080" {
-		t.Fatalf("BaseURL = %q, want %q", cfg.BaseURL, "http://localhost:8080")
+	if cfg.BaseURL != "http://localhost:8081" {
+		t.Fatalf("BaseURL = %q, want %q", cfg.BaseURL, "http://localhost:8081")
 	}
 }
 

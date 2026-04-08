@@ -11,7 +11,7 @@ import (
 	"github.com/reservation-v/short-link/internal/storage"
 )
 
-const defaultBaseURL = "http://localhost:8080"
+const defaultBaseURL = "http://localhost:8081"
 
 type Service struct {
 	storage storage.Storage

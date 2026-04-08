@@ -12,7 +12,7 @@ import (
 const (
 	StorageMemory   = "memory"
 	StoragePostgres = "postgres"
-	DefaultHTTPAddr = ":8080"
+	DefaultHTTPAddr = ":8081"
 )
 
 // Config contains runtime options for the application bootstrap

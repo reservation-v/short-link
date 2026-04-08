@@ -132,8 +132,8 @@ func TestServiceCreate_BaseURLHandling(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Create with default baseURL returned error: %v", err)
 	}
-	if resDefault.ShortURL != "http://localhost:8080/aaaaaaaaab" {
-		t.Fatalf("default ShortURL = %q, want %q", resDefault.ShortURL, "http://localhost:8080/aaaaaaaaab")
+	if resDefault.ShortURL != "http://localhost:8081/aaaaaaaaab" {
+		t.Fatalf("default ShortURL = %q, want %q", resDefault.ShortURL, "http://localhost:8081/aaaaaaaaab")
 	}
 
 	svcTrimmed := New(st, "http://localhost:8080/")
