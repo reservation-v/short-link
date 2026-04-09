@@ -1,0 +1,15 @@
+services:
+  postgres:
+    ports: !reset []
+
+  app:
+    ports: !reset []
+
+  k6:
+    image: grafana/k6:latest
+    depends_on:
+      app:
+        condition: service_started
+    command: ["run", "/scripts/k6.js"]
+    volumes:
+      - ./load:/scripts:ro

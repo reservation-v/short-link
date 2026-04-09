@@ -85,9 +85,27 @@ make reset
 ```bash
 make test
 ```
-#### Интеграционные тесты
+
+#### Интеграционные тесты (Postgres)
 ```bash
 make test-integration
+```
+
+#### Нагрузочный тест (k6)
+```bash
+make load-test
+```
+
+`make load-test` запускает изолированный тестовый стек на базе `docker-compose.yml` + `docker-compose.k6.yml`, прогоняет `k6` и после завершения автоматически удаляет контейнеры и volume.
+
+По умолчанию сценарий запускает `200` виртуальных пользователей на `15s` и проверяет конкурентный флоу:
+- `POST /links` на один и тот же URL (проверка идемпотентности)
+- `GET /links/{code}` по полученному коду
+
+Переопределить параметры можно так:
+```bash
+make load-test LOAD_VUS=300 LOAD_DURATION=45s \
+  LOAD_SHARED_URL=https://example.com/high-load
 ```
 
 ## Как пользоваться
@@ -107,15 +125,15 @@ curl -i -X POST http://localhost:8081/links \
 ```json
 {
   "url": "https://example.com/some/path",
-  "code": "aaaaaaaaaB",
-  "short_url": "http://localhost:8081/aaaaaaaaaB"
+  "code": "aaaaaaaaab",
+  "short_url": "http://localhost:8081/aaaaaaaaab"
 }
 ```
 
 Посмотреть оригинальный URL, если такая короткая ссылка сохранена (aaaaaaaaaB как раз и является короткой ссылкой):
 
 ```bash
-curl -i http://localhost:8081/links/aaaaaaaaaB
+curl -i http://localhost:8081/links/aaaaaaaaab
 ```
 
 Остановить Docker Compose:
